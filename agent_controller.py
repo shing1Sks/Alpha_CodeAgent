@@ -22,6 +22,36 @@ def save_state(state):
         json.dump(state, f, indent=2)
 
 
+def add_route_to_app(app_file, component="NewPage"):
+    """
+    Adds a new route to App.jsx for the given component.
+    """
+    content = read_file(app_file)
+    if "[ERROR]" in content:
+        return f"[ERROR] Could not read {app_file}"
+
+    lines = content.splitlines()
+
+    # 1. Ensure import statement
+    import_stmt = f'import {component} from "./{component}";'
+    if import_stmt not in content:
+        lines.insert(0, import_stmt)
+
+    # 2. Insert <Route> into <Routes>
+    route_line = f'    <Route path="/new" element={{<{component} />}} />'
+    new_lines = []
+    inserted = False
+    for line in lines:
+        new_lines.append(line)
+        if "<Routes>" in line and not inserted:
+            new_lines.append(route_line)
+            inserted = True
+
+    new_content = "\n".join(new_lines)
+    write_file(app_file, new_content, "overwrite")
+    return "[UPDATE] App.jsx updated with new route."
+
+
 def run_agent_cycle():
     state = load_state()
     task = state.get("task", "")
@@ -29,32 +59,32 @@ def run_agent_cycle():
 
     print(f"🚀 Agent Cycle {cycle} | Task: {task}")
 
-    # === EXAMPLE: Add new React page ===
     if "new page" in task.lower():
         pages_dir = "workspace/sample_project"
-        dir_tree = list_directory(pages_dir, depth=2)
-        print(f"\n📂 Directory Tree:\n{dir_tree}\n")
+        app_file = f"{pages_dir}/App.jsx"
 
-        # STEP 1: Create the component if it doesn't exist
+        # STEP 1: Create component
         new_file = f"{pages_dir}/NewPage.jsx"
-        try:
-            content = read_file(new_file)
-            print("[INFO] NewPage.jsx already exists.")
-        except:
+        if not os.path.exists(new_file):
+            print(f"[INFO] Creating {new_file}")
             write_file(
                 new_file,
                 "export default function NewPage() {\n    return <div>New Page</div>\n}",
                 "overwrite",
             )
-            print("[CREATE] NewPage.jsx created.")
-
             set_task_flag("continue", "Component created. Router update next.")
             state["cycle"] = cycle
             save_state(state)
             return
 
-        # STEP 2: Update router or App.jsx (not implemented yet, placeholder)
-        print("[TODO] Update App.jsx routing for NewPage.jsx")
+        # STEP 2: Update router/App.jsx
+        if os.path.exists(app_file):
+            print("[INFO] Updating App.jsx for routing...")
+            result = add_route_to_app(app_file)
+            print(result)
+        else:
+            print("[WARN] App.jsx not found. Skipping router update.")
+
         set_task_flag("complete", "Page setup complete.")
         state["cycle"] = cycle
         save_state(state)

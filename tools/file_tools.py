@@ -95,9 +95,7 @@ def write_file(filepath, content, mode="overwrite"):
         content (str): Content to write.
         mode (str): 'overwrite' | 'append' | 'insert_at_line:X'
     """
-    import os
-
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)  # Create dirs if missing
 
     if mode == "overwrite":
         with open(filepath, "w", encoding="utf-8") as f:
