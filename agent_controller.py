@@ -1,13 +1,20 @@
 import json
 from tools.file_tools import list_directory, write_file, read_file
 from tools.task_tools import set_task_flag
+import os
 
 STATE_FILE = "agent_state.json"
 
 
 def load_state():
+    if not os.path.exists(STATE_FILE):
+        return {"task": "", "status": "in_progress", "message": None, "cycle": 0}
+
     with open(STATE_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return {"task": "", "status": "in_progress", "message": None, "cycle": 0}
 
 
 def save_state(state):
