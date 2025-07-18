@@ -1,0 +1,56 @@
+# --- Python Compiled / Cache Files ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Virtual Environments ---
+venv/
+.env/
+.venv/
+
+# --- Distribution / Packaging ---
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- Logs & Databases ---
+*.log
+*.sqlite3
+*.db
+*.sql
+
+# --- IDE / Editor Files ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+
+# --- Testing / Coverage ---
+.coverage
+htmlcov/
+*.cover
+*.py,cover
+.pytest_cache/
+.tox/
+.mypy_cache/
+.nox/
+.cache/
+
+# --- Environment & Config ---
+*.env
+*.ini
+*.cfg
+*.toml
+
+# --- Jupyter / Notebook ---
+.ipynb_checkpoints/
+*.ipynb
+
+# --- Misc ---
+*.bak
+*.tmp
