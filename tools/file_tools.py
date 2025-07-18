@@ -2,7 +2,7 @@ import os
 import re
 
 
-def list_directory(path, depth=2, prefix=""):
+def list_directory(path, depth=2):
     """
     Recursively list directories and files up to a given depth.
     Returns a string tree representation.
@@ -84,3 +84,96 @@ def read_file(filepath, lines=None, keyword=None, context=2):
 
     # Case 3: Full content
     return "".join(content)
+
+
+def write_file(filepath, content, mode="overwrite"):
+    """
+    Write or modify a file.
+
+    Args:
+        filepath (str): Target file.
+        content (str): Content to write.
+        mode (str): 'overwrite' | 'append' | 'insert_at_line:X'
+    """
+    import os
+
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+    if mode == "overwrite":
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(content)
+        return f"[OVERWRITE] File '{filepath}' updated."
+
+    elif mode == "append":
+        with open(filepath, "a", encoding="utf-8") as f:
+            f.write(content)
+        return f"[APPEND] Content added to '{filepath}'."
+
+    elif mode.startswith("insert_at_line:"):
+        try:
+            line_num = int(mode.split(":")[1])
+        except ValueError:
+            return "[ERROR] Invalid line number in 'insert_at_line'."
+
+        if not os.path.exists(filepath):
+            return f"[ERROR] File '{filepath}' not found."
+
+        with open(filepath, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+        if line_num < 1 or line_num > len(lines) + 1:
+            return "[ERROR] Line number out of range."
+
+        lines.insert(line_num - 1, content)
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.writelines(lines)
+        return f"[INSERT] Content inserted at line {line_num} in '{filepath}'."
+
+    else:
+        return f"[ERROR] Invalid mode '{mode}'."
+
+
+def delete_lines(filepath, start, end):
+    """
+    Delete lines in a file from 'start' to 'end' (1-based indices).
+    """
+    import os
+
+    if not os.path.exists(filepath):
+        return f"[ERROR] File '{filepath}' not found."
+
+    with open(filepath, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+
+    if start < 1 or end > len(lines) or start > end:
+        return "[ERROR] Invalid line range."
+
+    del lines[start - 1 : end]
+
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.writelines(lines)
+
+    return f"[DELETE] Lines {start}-{end} removed from '{filepath}'."
+
+
+# def replace_in_file(filepath, keyword, replacement):
+#     """
+#     Replace all occurrences of a keyword with replacement text.
+#     """
+#     import os
+
+#     if not os.path.exists(filepath):
+#         return f"[ERROR] File '{filepath}' not found."
+
+#     with open(filepath, "r", encoding="utf-8") as f:
+#         content = f.read()
+
+#     new_content = content.replace(keyword, replacement)
+
+#     if new_content == content:
+#         return f"[INFO] No occurrences of '{keyword}' found."
+
+#     with open(filepath, "w", encoding="utf-8") as f:
+#         f.write(new_content)
+
+#     return f"[REPLACE] All occurrences of '{keyword}' replaced with '{replacement}'."
