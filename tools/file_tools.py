@@ -95,7 +95,9 @@ def write_file(filepath, content, mode="overwrite"):
         content (str): Content to write.
         mode (str): 'overwrite' | 'append' | 'insert_at_line:X'
     """
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)  # Create dirs if missing
+    dir_path = os.path.dirname(filepath)
+    if dir_path:  # Only create directories if the path is not empty
+        os.makedirs(dir_path, exist_ok=True)
 
     if mode == "overwrite":
         with open(filepath, "w", encoding="utf-8") as f:
@@ -154,24 +156,22 @@ def delete_lines(filepath, start, end):
     return f"[DELETE] Lines {start}-{end} removed from '{filepath}'."
 
 
-# def replace_in_file(filepath, keyword, replacement):
-#     """
-#     Replace all occurrences of a keyword with replacement text.
-#     """
-#     import os
+def normalize_path(filepath):
+    """
+    Ensure file operations are always inside 'workspace'.
+    """
+    if not filepath.startswith("workspace"):
+        filepath = os.path.join("workspace", filepath.lstrip("/"))
+    return filepath
 
-#     if not os.path.exists(filepath):
-#         return f"[ERROR] File '{filepath}' not found."
 
-#     with open(filepath, "r", encoding="utf-8") as f:
-#         content = f.read()
+def make_directory(path):
+    """
+    Creates a directory (recursively).
+    """
+    path = normalize_path(path)
+    if os.path.exists(path):
+        return f"[MKDIR] Directory '{path}' already exists."
 
-#     new_content = content.replace(keyword, replacement)
-
-#     if new_content == content:
-#         return f"[INFO] No occurrences of '{keyword}' found."
-
-#     with open(filepath, "w", encoding="utf-8") as f:
-#         f.write(new_content)
-
-#     return f"[REPLACE] All occurrences of '{keyword}' replaced with '{replacement}'."
+    os.makedirs(path, exist_ok=True)
+    return f"[MKDIR] Directory '{path}' created."

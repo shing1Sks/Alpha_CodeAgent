@@ -1,3 +1,5 @@
 # For file/directory operations (standard library covers most)
 # Adding rich for better CLI logging
 rich==13.7.1
+groq
+python-dotenv

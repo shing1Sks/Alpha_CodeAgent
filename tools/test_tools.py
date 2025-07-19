@@ -4,7 +4,6 @@ from file_tools import (
     write_file,
     read_file,
     delete_lines,
-    replace_in_file,
 )
 
 # Try listing the workspace
@@ -43,5 +42,3 @@ print(
 print(read_file("workspace/sample_project/Hello.js"))
 
 print(delete_lines("workspace/sample_project/Hello.js", 2, 3))
-
-print(replace_in_file("workspace/sample_project/Hello.js", "Hello", "Hi"))

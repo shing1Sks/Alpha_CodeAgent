@@ -1,4 +1,4 @@
-from agent_controller import run_agent_cycle
+from llm_agent import run_agent
 
 if __name__ == "__main__":
-    run_agent_cycle()
+    run_agent("Ceate a simple rock paper scissors game in python")
